@@ -8,7 +8,6 @@ from docx import Document
 from pptx import Presentation
 from pypdf import PdfReader
 
-MAX_PAGES = int(os.getenv('MAX_PAGES', '40'))
 MAX_TEXT = int(os.getenv('MAX_TEXT_CHARS', '80000'))
 SUPPORTED = {'.pdf', '.docx', '.pptx', '.doc', '.ppt'}
 
@@ -36,8 +35,6 @@ def pdf_text(path):
     reader = PdfReader(path)
     if reader.is_encrypted and not reader.decrypt(''):
         raise DocumentError('Password-protected PDFs are not supported. Upload an unlocked copy.')
-    if len(reader.pages) > MAX_PAGES:
-        raise DocumentError(f'Please upload a document with at most {MAX_PAGES} pages.')
     chunks, ocr_pages = [], 0
     deadline = time.monotonic() + 600
     for index, page in enumerate(reader.pages):
@@ -97,8 +94,6 @@ def extract_document(path: Path):
                 text = '\n'.join(parts)
             else:
                 presentation = Presentation(path)
-                if len(presentation.slides) > MAX_PAGES:
-                    raise DocumentError(f'Please upload a presentation with at most {MAX_PAGES} slides.')
                 parts = []
                 for i, slide in enumerate(presentation.slides):
                     parts.append(f'[Slide {i + 1}]')

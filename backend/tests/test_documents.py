@@ -55,13 +55,29 @@ def test_text_limit(documents, monkeypatch):
     with pytest.raises(DocumentError, match='too much text'): extract_document(documents/'notes.docx')
 
 
-def test_pdf_page_limit(tmp_path, monkeypatch):
-    monkeypatch.setattr('app.documents.MAX_PAGES', 1)
-    writer = PdfWriter()
-    writer.add_blank_page(width=100, height=100)
-    writer.add_blank_page(width=100, height=100)
-    path = tmp_path/'long.pdf'; writer.write(path)
-    with pytest.raises(DocumentError, match='at most 1 pages'): extract_document(path)
+@pytest.mark.parametrize('extension', ['pdf', 'pptx'])
+def test_documents_over_40_pages(tmp_path, extension):
+    path = tmp_path / f'long.{extension}'
+    if extension == 'pdf':
+        from reportlab.pdfgen import canvas
+        pdf = canvas.Canvas(str(path))
+        for _ in range(41):
+            pdf.drawString(40, 780, NOTES)
+            pdf.showPage()
+        pdf.save()
+    else:
+        from pptx import Presentation
+        from pptx.util import Inches
+        presentation = Presentation()
+        for _ in range(41):
+            slide = presentation.slides.add_slide(presentation.slide_layouts[6])
+            slide.shapes.add_textbox(Inches(1), Inches(1), Inches(8), Inches(4)).text = NOTES
+        presentation.save(path)
+    text, ocr = extract_document(path)
+    label = 'Page' if extension == 'pdf' else 'Slide'
+    assert f'[{label} 41]' in text
+    assert text.count('Photosynthesis') == 41
+    assert ocr == 0
 
 
 def test_empty_word(tmp_path):

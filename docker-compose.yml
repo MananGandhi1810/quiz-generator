@@ -4,8 +4,7 @@ services:
     environment:
       GEMINI_API_KEY: ${GEMINI_API_KEY:?Set GEMINI_API_KEY in .env}
       GEMINI_MODEL: ${GEMINI_MODEL:-gemini-2.5-flash}
-      MAX_UPLOAD_MB: 10
-      MAX_PAGES: 40
+      MAX_UPLOAD_MB: 100
       MAX_TEXT_CHARS: 80000
       OCR_LANGUAGE: eng
     restart: unless-stopped

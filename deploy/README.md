@@ -36,7 +36,7 @@ This setup assumes a Linux VPS running Docker Compose and host Nginx. Host Nginx
 
 6. Open **https://quizgen.manan.cloud**, upload `examples/study-notes.pdf`, and generate a quiz. Check `https://quizgen.manan.cloud/api/health` if diagnosing routing issues.
 
-The Gemini key stays in the backend. Uploads support the same 10 MB limit and long OCR/generation timeout through both Nginx layers. The app is publicly accessible and every generation uses your Gemini quota; this version does not include user accounts. If access should be private, configure access restrictions in your reverse proxy.
+The Gemini key stays in the backend. Uploads support the same 100 MB file limit (with 101 MB request limits for multipart overhead) and long OCR/generation timeout through both Nginx layers. The app is publicly accessible and every generation uses your Gemini quota; this version does not include user accounts. If access should be private, configure access restrictions in your reverse proxy.
 
 For updates, copy updated sources and run `docker compose up --build -d` again. Use `docker compose logs --tail=100` for diagnostics. If changing `PORT`, also change the upstream port in the host Nginx configuration.
 

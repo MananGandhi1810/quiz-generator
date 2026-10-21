@@ -20,3 +20,5 @@ class Quiz(BaseModel):
     model_config = ConfigDict(str_strip_whitespace=True)
     title: str = Field(min_length=1, max_length=200)
     questions: list[Question] = Field(min_length=1, max_length=15)
+
+    research: dict | None = None

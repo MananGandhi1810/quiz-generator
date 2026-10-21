@@ -8,4 +8,4 @@ RUN useradd --create-home --uid 10001 quiz
 COPY --chown=quiz:quiz app ./app
 USER quiz
 EXPOSE 8000
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--no-access-log"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--access-log"]
